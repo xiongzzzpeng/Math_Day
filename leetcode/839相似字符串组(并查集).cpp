@@ -7,13 +7,16 @@ using namespace std;
 #define LOCAL
 typedef pair<int, int> PII;
 
+// https://leetcode.cn/problems/similar-string-groups/
+// 涉及到集合的考虑并查集
+
 struct UnionFind
 {
     vector<int> father;
     int set;
 
     // 初始化
-    UnionFind(int n) : father(n + 2, 0), set(n)
+    UnionFind(int n) : father(n + 1, 0), set(n)
     {
         for (int i = 0; i <= n; i++)
             father[i] = i;
@@ -37,29 +40,38 @@ struct UnionFind
     void unionSets(int x, int y)
     {
         father[find(x)] = find(y);
+        set--;
     }
 };
 
+int numSimilarGroups(vector<string> &strs)
+{
+    int n = strs.size();
+    int m = strs[0].size();
+    UnionFind ui(n);
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            if (ui.find(i) != ui.find(j))
+            {
+                int diff = 0;
+                for (int k = 0; k < m && diff < 3; k++)
+                {
+                    if (strs[i][k] != strs[j][k])
+                        diff++;
+                }
+                if (diff == 0 || diff == 2)
+                    ui.unionSets(i, j);
+            }
+        }
+    }
+    return ui.set;
+}
+
 void issue()
 {
-    int n, m;
-    cin >> n >> m;
-    // 调用，构造一个大小是n的数组
-    UnionFind ui(n);
-    while (m--)
-    {
-        int a, x, y;
-        cin >> a >> x >> y;
-        if (a == 2)
-        {
-            if (ui.isSameSet(x, y))
-                cout << "Y" << endl;
-            else
-                cout << "N" << endl;
-        }
-        else
-            ui.unionSets(x, y);
-    }
 }
 
 int main()
@@ -73,7 +85,7 @@ int main()
 #endif
 
     int T = 1;
-    // cin >> T;
+    cin >> T;
     while (T--)
     {
         issue();
