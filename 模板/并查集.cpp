@@ -26,27 +26,6 @@ struct UnionFind
         return father[i];
     }
 
-    /*
-
-        int find(int i)
-        {
-            // 模拟栈
-            vector<int> stack;
-            while (i != father[i])
-            {
-                stack.push_back(i);
-                i = father[i];
-            }
-            while (!stack.empty())
-            {
-                father[stack.back()] = i;
-                stack.pop_back();
-            }
-            return i;
-        }
-
-    */
-
     // 判断是不是同一个老大
     bool isSameSet(int x, int y)
     {
@@ -57,22 +36,6 @@ struct UnionFind
     void unionSets(int x, int y)
     {
         father[find(x)] = find(y);
-        // 小的连大的操作，一般用不上
-        // int fx = find(x);
-        // int fy = find(y);
-        // if (fy != fx)
-        // {
-        //     if (size[fx] >= size[fy])
-        //     {
-        //         size[fx] += size[fy];
-        //         father[fy] = fx;
-        //     }
-        //     else
-        //     {
-        //         size[fy] += size[fx];
-        //         father[fx] = fy;
-        //     }
-        // }
     }
 };
 
