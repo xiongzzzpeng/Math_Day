@@ -31,16 +31,17 @@ void dfs(int u)
 }
 
 // 洪水填充(感染) 岛屿问题
-void dfs_flood(vector<vector<char>> &grid, int i, int j)
+void dfs_flood(vector<vector<char>> &grid, int i, int j, int n, int m)
 {
-    if (i < 0 || i == grid.size() || j < 0 || j == grid[0].size() || grid[i][j] != '1')
+    // i, j是当前坐标  n, m是行范围 列范围
+    if (i < 0 || i == n || j < 0 || j == m || grid[i][j] != 'O')
         return;
 
-    grid[i][j] = 0;
-    dfs_flood(grid, i - 1, j);
-    dfs_flood(grid, i + 1, j);
-    dfs_flood(grid, i, j - 1);
-    dfs_flood(grid, i, j + 1);
+    grid[i][j] = 'F'; // F, O是判断条件
+    dfs_flood(grid, i - 1, j, n, m);
+    dfs_flood(grid, i + 1, j, n, m);
+    dfs_flood(grid, i, j - 1, n, m);
+    dfs_flood(grid, i, j + 1, n, m);
 }
 
 int main()
