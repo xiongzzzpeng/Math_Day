@@ -30,6 +30,19 @@ void dfs(int u)
     }
 }
 
+// 洪水填充(感染) 岛屿问题
+void dfs_flood(vector<vector<char>> &grid, int i, int j)
+{
+    if (i < 0 || i == grid.size() || j < 0 || j == grid[0].size() || grid[i][j] != '1')
+        return;
+
+    grid[i][j] = 0;
+    dfs_flood(grid, i - 1, j);
+    dfs_flood(grid, i + 1, j);
+    dfs_flood(grid, i, j - 1);
+    dfs_flood(grid, i, j + 1);
+}
+
 int main()
 {
     std::ios::sync_with_stdio(false);
