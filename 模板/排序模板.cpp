@@ -61,6 +61,41 @@ void merge_sort(vector<int> &q, int l, int r)
         q[i] = tem[j];
 }
 
+// 拓扑排序，不能有环
+vector<int> findOrder(int num, vector<vector<int>> &pre)
+{
+    vector<vector<int>> graph(num); // 邻接表
+    vector<int> indegree(num, 0);   // 入度
+    for (auto &edge : pre)
+    {
+        graph[edge[1]].push_back(edge[0]);
+        indegree[edge[0]]++;
+    }
+
+    queue<int> q;
+    for (int i = 0; i < num; i++)
+    {
+        if (indegree[i] == 0)
+            q.push(i);
+    }
+
+    vector<int> order;
+    while (!q.empty())
+    {
+        int cur = q.front();
+        q.pop();
+        order.push_back(cur);
+
+        for (int next : graph[cur])
+        {
+            if (--indegree[next] == 0)
+                q.push(next);
+        }
+    }
+
+    return order.size() == num ? order : vector<int>();
+}
+
 int main()
 {
     std::ios::sync_with_stdio(false);
