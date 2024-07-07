@@ -61,7 +61,7 @@ void merge_sort(vector<int> &q, int l, int r)
         q[i] = tem[j];
 }
 
-// 拓扑排序，不能有环
+// 拓扑排序,leetcode版
 vector<int> findOrder(int num, vector<vector<int>> &pre)
 {
     vector<vector<int>> graph(num); // 邻接表
@@ -95,6 +95,61 @@ vector<int> findOrder(int num, vector<vector<int>> &pre)
 
     return order.size() == num ? order : vector<int>();
 }
+
+// 拓扑排序,输入流版
+struct Order
+{
+    void findOrder(vector<vector<int>> &graph, vector<int> &indegree, vector<int> &ans, int n)
+    {
+        queue<int> q;
+        for (int i = 1; i <= n; i++)
+        {
+            if (indegree[i] == 0)
+                q.push(i);
+        }
+
+        while (!q.empty())
+        {
+            int cur = q.front();
+            q.pop();
+            ans.push_back(cur);
+
+            for (auto next : graph[cur])
+            {
+                if (--indegree[next] == 0)
+                    q.push(next);
+            }
+        }
+    }
+
+    void issue()
+    {
+        int n, m; // n个点，m条边
+        cin >> n >> m;
+        vector<vector<int>> graph(n + 1); // 图
+        vector<int> indegree(n + 1, 0);   // 入度
+
+        for (int i = 0; i < m; i++)
+        {
+            int from, to;
+            cin >> from >> to;
+            graph[from].push_back(to);
+            indegree[to]++;
+        }
+
+        vector<int> ans;
+        findOrder(graph, indegree, ans, n);
+
+        if (ans.size() == n)
+        {
+            for (int i = 0; i < n - 1; i++)
+                cout << ans[i] << " ";
+            cout << ans[n - 1] << endl;
+        }
+        else
+            cout << "-1" << endl;
+    }
+};
 
 int main()
 {
