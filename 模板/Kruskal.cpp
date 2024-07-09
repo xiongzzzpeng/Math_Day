@@ -7,13 +7,14 @@ using namespace std;
 #define LOCAL
 typedef pair<int, int> PII;
 
+// 最小生成树_k算法
 struct UnionFind
 {
     vector<int> father;
     int set;
 
     // 初始化
-    UnionFind(int n) : father(n + 2, 0), set(n)
+    UnionFind(int n) : father(n + 2, 0), set(n + 1)
     {
         for (int i = 0; i <= n; i++)
             father[i] = i;
@@ -34,34 +35,58 @@ struct UnionFind
     }
 
     // 合并x跟y
-    void unionSets(int x, int y)
+    bool unionSets(int x, int y)
     {
-        int fx = find(x), fy = find(y);
+        int fx = find(x);
+        int fy = find(y);
         if (fx != fy)
+        {
             father[fx] = fy;
+            return true;
+        }
+        else
+            return false;
     }
+};
+
+struct Edge
+{
+    int u, v, w;
 };
 
 void issue()
 {
     int n, m;
     cin >> n >> m;
-    // 调用，构造一个大小是n的数组
     UnionFind ui(n);
-    while (m--)
+    vector<Edge> graph(n + 1);
+
+    for (int i = 1; i <= m; i++)
     {
-        int a, x, y;
-        cin >> a >> x >> y;
-        if (a == 2)
-        {
-            if (ui.isSameSet(x, y))
-                cout << "Y" << endl;
-            else
-                cout << "N" << endl;
-        }
-        else
-            ui.unionSets(x, y);
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph.push_back({u, v, w});
     }
+
+    // 根据权值排序
+    sort(graph.begin(), graph.end(), [](const Edge &a, const Edge &b)
+         { return a.w < b.w; });
+
+    int ans = 0;
+    int num_edge = 0;
+    for (auto &edge : graph)
+    {
+        if (ui.unionSets(edge.u, edge.v))
+        {
+            num_edge++;
+            ans += edge.w;
+        }
+    }
+
+    if (num_edge == n - 1)
+        cout << ans << endl;
+    else
+        cout << "orz" << endl;
 }
 
 int main()
