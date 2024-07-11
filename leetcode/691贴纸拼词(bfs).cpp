@@ -68,7 +68,7 @@ public:
                     string next = getNextString(cur, s);
                     if (next.empty())
                         return ans;
-                    if (!vis.contains(next))
+                    if (vis.find(next) == vis.end())
                     {
                         vis.insert(next);
                         q.push(next);
