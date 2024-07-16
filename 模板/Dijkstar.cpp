@@ -11,6 +11,54 @@ typedef pair<int, int> PII;
 // 使用范围:有向图，边无负数
 // 求源点到每个点的最短路
 
+
+// 二维情况
+int dijkstar_tow(vector<vector<int>> &grid)
+{
+    int move[] = {-1, 0, 1, 0, -1};
+    int n = grid.size(), m = grid[0].size();
+    vector<vector<int>> distance(n, vector<int>(m, INT32_MAX));
+    distance[0][0] = 0;
+    vector<vector<bool>> visited(n, vector<bool>(m, false));
+
+    auto cmp = [](vector<int> &a, vector<int> &b)
+    {
+        return a[2] > b[2];
+    };
+    priority_queue<vector<int>, vector<vector<int>>, decltype(cmp)> heap(cmp);
+    heap.push({0, 0, grid[0][0]});
+
+    while (!heap.empty())
+    {
+        auto u = heap.top();
+        heap.pop();
+
+        int x = u[0], y = u[1], w = u[2];
+        if (visited[x][y])
+            continue;
+
+        if (x == n - 1 && y == m - 1)
+            return w;
+        visited[x][y] = true;
+
+        for (int i = 0; i < 4; i++)
+        {
+            int nx = x + move[i], ny = y + move[i + 1];
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m && !visited[nx][ny])
+            {
+                int nw = max(w, grid[nx][ny]); // 一般改这句
+                if (nw < distance[nx][ny])
+                {
+                    distance[nx][ny] = nw;
+                    heap.push({nx, ny, nw});
+                }
+            }
+        }
+    }
+
+    return -1;
+}
+
 int dijkstar(vector<vector<int>> &times, int n, int s)
 {
     // n图中点的数量，s是源点
