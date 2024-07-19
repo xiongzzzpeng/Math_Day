@@ -6,31 +6,27 @@ using namespace std;
 #define sc second
 #define LOCAL
 typedef pair<int, int> PII;
-ll p;
+ll mod;
 
 // 快速幂(a的b次幂)
-int qpow(ll a, ll b)
-{
+ll qpow(ll a, ll b) {
     ll ans = 1;
-    while (b > 0)
-    {
+    while (b > 0) {
         if (b & 1)
-            ans = ans * a % p;
-        a = a * a % p;
+            ans = ans * a % mod;
+        a = a * a % mod;
         b >>= 1;
     }
     return ans;
 }
 
-void issue()
-{
+void issue() {
     ll a, b;
-    cin >> a >> b >> p;
+    cin >> a >> b >> mod;
     cout << qpow(a, b) << endl;
 }
 
-int main()
-{
+int main() {
     std::ios::sync_with_stdio(false);
     cin.tie(0), cout.tie(0);
 
@@ -41,8 +37,7 @@ int main()
 
     int T = 1;
     // cin >> T;
-    while (T--)
-    {
+    while (T--) {
         issue();
     }
     return 0;
