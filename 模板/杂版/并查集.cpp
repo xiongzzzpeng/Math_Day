@@ -7,65 +7,55 @@ using namespace std;
 #define LOCAL
 typedef pair<int, int> PII;
 
-struct UnionFind
-{
+struct DSU {
     vector<int> father;
     int set;
 
     // 初始化
-    UnionFind(int n) : father(n + 2, 0), set(n)
-    {
+    DSU(int n) : father(n + 2, 0), set(n) {
         for (int i = 0; i <= n; i++)
             father[i] = i;
     }
 
     // 递归调用版本find
-    int find(int i)
-    {
+    int find(int i) {
         if (i != father[i])
             father[i] = find(father[i]);
         return father[i];
     }
 
     // 判断是不是同一个老大
-    bool isSameSet(int x, int y)
-    {
+    bool isSameSet(int x, int y) {
         return find(x) == find(y);
     }
 
     // 合并x跟y
-    void unionSets(int x, int y)
-    {
+    void unionSets(int x, int y) {
         int fx = find(x), fy = find(y);
         if (fx != fy)
             father[fx] = fy;
     }
 };
 
-void issue()
-{
+void issue() {
     int n, m;
     cin >> n >> m;
     // 调用，构造一个大小是n的数组
-    UnionFind ui(n);
-    while (m--)
-    {
+    DSU ui(n);
+    while (m--) {
         int a, x, y;
         cin >> a >> x >> y;
-        if (a == 2)
-        {
+        if (a == 2) {
             if (ui.isSameSet(x, y))
                 cout << "Y" << endl;
             else
                 cout << "N" << endl;
-        }
-        else
+        } else
             ui.unionSets(x, y);
     }
 }
 
-int main()
-{
+int main() {
     std::ios::sync_with_stdio(false);
     cin.tie(0), cout.tie(0);
 
@@ -76,8 +66,7 @@ int main()
 
     int T = 1;
     // cin >> T;
-    while (T--)
-    {
+    while (T--) {
         issue();
     }
     return 0;
