@@ -47,9 +47,7 @@ struct PrefixSum {
     }
 
     int two_Sum(int a, int b, int c, int d) {
-        c++;
-        d++;
-        return pre_sum2[c][d] - pre_sum2[c][b] - pre_sum2[a][d] + pre_sum2[a][b];
+        return pre_sum2[c][d] - pre_sum2[c][b - 1] - pre_sum2[a - 1][d] + pre_sum2[a - 1][b - 1];
     }
 };
 
