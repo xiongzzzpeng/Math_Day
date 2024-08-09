@@ -55,14 +55,14 @@ void Solve() {
     vector<int> nums1 = {1, 2, 3, 4, 5};
     PrefixSum ps;
     ps.md_One(nums1);
-    cout << ps.one_Sum(2, 4) << endl; // 输出 9 (2+3+4)
+    cout << ps.one_Sum(1, 2) << endl; // 输出 3 (1+2)
 
     vector<vector<int>> nums2 = {
         {1, 2, 3},
         {4, 5, 6},
         {7, 8, 9}};
     ps.md_Tow(nums2);
-    cout << ps.two_Sum(1, 1, 2, 2) << endl; // 输出 28 (5+6+8+9)
+    cout << ps.two_Sum(1, 1, 2, 2) << endl; // 输出 12 (1+2+4+5)
 }
 
 int main() {
