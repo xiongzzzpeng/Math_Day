@@ -8,7 +8,7 @@ using namespace std;
 typedef pair<int, int> PII;
 
 struct TrieTree {
-    const int MAXN = 150001;
+    const int MAXN = 4e5 + 1;
     vector<vector<int>> tree;
     vector<int> pass;
     vector<int> end;
