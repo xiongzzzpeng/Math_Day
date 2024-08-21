@@ -8,16 +8,44 @@ using ll = long long;
 using PII = pair<int, int>;
 using PLL = pair<ll, ll>;
 
-// 线段树用于区间合并的问题
-// 时间复杂度: 范围修改，范围查询 log^n
-// 作用范围: 区间内的 最大值 最小值 累加和(不能维护出现的最多数)
-
 struct SegmentTree {
+
+    SegmentTree(int n_) : n(n_), tag(4 * n, 1), sum(4 * n), addTag(4 * n, 0) {}
+
+    // 查询[l, r)的和
+    ll query(int x, int y) {
+        return query(1, 0, n, x, y);
+    }
+
+    // [l, r)上乘v
+    void rangeMul(int x, int y, ll v) {
+        rangeMul(1, 0, n, x, y, v);
+    }
+
+    // [l, r)上加v
+    void rangeAdd(int x, int y, ll v) {
+        rangeAdd(1, 0, n, x, y, v);
+    }
+
+    // 在x上添加v
+    void add(int x, ll v) {
+        add(1, 0, n, x, v);
+    }
+
+    // 在x位置上设置为i
+    void set(int x, ll i) {
+        set(1, 0, n, x, i);
+    }
+
+    // 得到x处的值
+    ll get(int x) {
+        return get(1, 0, n, x);
+    }
+
+private:
     const ll P = 1e12 + 7;
     int n;
     std::vector<ll> tag, sum, addTag;
-
-    SegmentTree(int n_) : n(n_), tag(4 * n, 1), sum(4 * n), addTag(4 * n, 0) {}
 
     void pull(int p) {
         sum[p] = (sum[2 * p] + sum[2 * p + 1]) % P;
@@ -44,7 +72,6 @@ struct SegmentTree {
         addTag[p] = 0;
     }
 
-    // 查询[l, r)的和
     ll query(int p, int l, int r, int x, int y) {
         if (l >= y || r <= x) {
             return 0;
@@ -57,11 +84,6 @@ struct SegmentTree {
         return (query(2 * p, l, m, x, y) + query(2 * p + 1, m, r, x, y)) % P;
     }
 
-    ll query(int x, int y) {
-        return query(1, 0, n, x, y);
-    }
-
-    // [l, r)上乘v
     void rangeMul(int p, int l, int r, int x, int y, ll v) {
         if (l >= y || r <= x) {
             return;
@@ -76,11 +98,6 @@ struct SegmentTree {
         pull(p);
     }
 
-    void rangeMul(int x, int y, ll v) {
-        rangeMul(1, 0, n, x, y, v);
-    }
-
-    // [l, r)上加v
     void rangeAdd(int p, int l, int r, int x, int y, ll v) {
         if (l >= y || r <= x) {
             return;
@@ -93,10 +110,6 @@ struct SegmentTree {
         rangeAdd(2 * p, l, m, x, y, v);
         rangeAdd(2 * p + 1, m, r, x, y, v);
         pull(p);
-    }
-
-    void rangeAdd(int x, int y, ll v) {
-        rangeAdd(1, 0, n, x, y, v);
     }
 
     void add(int p, int l, int r, int x, ll v) {
@@ -114,9 +127,34 @@ struct SegmentTree {
         pull(p);
     }
 
-    // 在x上添加v
-    void add(int x, ll v) {
-        add(1, 0, n, x, v);
+    void set(int p, int l, int r, int x, ll i) {
+        if (r - l == 1) {
+            sum[p] = i % P; // 设置位置 x 为值 i
+            tag[p] = 1;     // 重置乘法标记
+            addTag[p] = 0;  // 重置加法标记
+            return;
+        }
+        int m = (l + r) / 2;
+        push(p, l, r); // 处理懒惰标记
+        if (x < m) {
+            set(2 * p, l, m, x, i);
+        } else {
+            set(2 * p + 1, m, r, x, i);
+        }
+        pull(p); // 更新父节点
+    }
+
+    ll get(int p, int l, int r, int x) {
+        if (r - l == 1) {
+            return sum[p];
+        }
+        int m = (l + r) / 2;
+        push(p, l, r);
+        if (x < m) {
+            return get(2 * p, l, m, x);
+        } else {
+            return get(2 * p + 1, m, r, x);
+        }
     }
 };
 
@@ -131,17 +169,11 @@ void Solve() {
     segTree.add(3, 9); // 在索引3添加9
     segTree.add(4, 6); // 在索引4添加6
 
-    // 对范围[1, 4)每个元素加2
-    segTree.rangeAdd(1, 4, 2);
-
-    // 查询范围[1, 4)的和 = 25
-    cout << segTree.query(1, 4) << endl;
-
-    // 对范围[1, 4)每个元素乘2
-    segTree.rangeMul(1, 4, 2);
-
-    // 查询范围[1, 4)的和 = 50
-    cout << segTree.query(1, 4) << endl;
+    segTree.set(1, 6);
+    segTree.rangeAdd(0, 2, 1);
+    for (int i = 0; i < n; i++) {
+        cout << segTree.get(i) << " ";
+    }
 }
 
 int main() {
