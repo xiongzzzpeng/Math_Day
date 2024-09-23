@@ -20,26 +20,22 @@ void Solve() {
     }
 
     vector<int> st;
-    int now = 0;
     vector<vector<int>> ans(n, vector<int>(2, -1));
 
     for (int i = 0; i < n; i++) {
-        while (now > 0 && arr[st.back()] >= arr[i]) {
+        while (!st.empty() && arr[st.back()] >= arr[i]) {
             int cur = st.back();
             st.pop_back();
-            now--;
-            ans[cur][0] = (now > 0) ? st.back() : -1;
+            ans[cur][0] = (!st.empty()) ? st.back() : -1;
             ans[cur][1] = i;
         }
         st.push_back(i);
-        now++;
     }
 
-    while (now > 0) {
+    while (!st.empty()) {
         int cur = st.back();
         st.pop_back();
-        now--;
-        ans[cur][0] = (now > 0) ? st.back() : -1;
+        ans[cur][0] = (!st.empty()) ? st.back() : -1;
         ans[cur][1] = -1;
     }
 
