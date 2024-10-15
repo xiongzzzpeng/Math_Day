@@ -9,7 +9,7 @@ typedef pair<int, int> PII;
 
 // 快速幂(a的b次幂)
 i64 qpow(i64 a, i64 b, int mod) {
-    i64 res = 0;
+    i64 res = 1;
     while (b) {
         if (b & 1) {
             res = res * a % mod;
