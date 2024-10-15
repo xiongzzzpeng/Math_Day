@@ -13,9 +13,9 @@ i64 qpow(i64 a, i64 b, int mod) {
     while (b) {
         if (b & 1) {
             res = res * a % mod;
-            a = a * a % mod;
-            b >>= 1;
         }
+        a = a * a % mod;
+        b >>= 1;
     }
     return res;
 }
@@ -23,7 +23,7 @@ i64 qpow(i64 a, i64 b, int mod) {
 void issue() {
     i64 a, b;
     cin >> a >> b;
-    cout << qpow(a, b, 1e9 +7) << endl;
+    cout << qpow(a, b, 1e9 + 7) << endl;
 }
 
 int main() {
