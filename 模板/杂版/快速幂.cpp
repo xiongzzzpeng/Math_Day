@@ -1,29 +1,29 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
+#define i64 long long
 #define endl "\n"
 #define fs first
 #define sc second
 #define LOCAL
 typedef pair<int, int> PII;
-ll mod;
 
 // 快速幂(a的b次幂)
-ll qpow(ll a, ll b) {
-    ll ans = 1;
-    while (b > 0) {
-        if (b & 1)
-            ans = ans * a % mod;
-        a = a * a % mod;
-        b >>= 1;
+i64 qpow(i64 a, i64 b, int mod) {
+    i64 res = 0;
+    while (b) {
+        if (b & 1) {
+            res = res * a % mod;
+            a = a * a % mod;
+            b >>= 1;
+        }
     }
-    return ans;
+    return res;
 }
 
 void issue() {
-    ll a, b;
-    cin >> a >> b >> mod;
-    cout << qpow(a, b) << endl;
+    i64 a, b;
+    cin >> a >> b;
+    cout << qpow(a, b, 1e9 +7) << endl;
 }
 
 int main() {
