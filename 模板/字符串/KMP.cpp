@@ -8,80 +8,46 @@ using ll = long long;
 using PII = pair<int, int>;
 using PLL = pair<ll, ll>;
 
-struct KMP {
-    string tmp; // 目标串
-    vector<int> next;
+vector<int> KMP(string &text, string &pattern) {
+    int m = pattern.size();
 
-    KMP(const string &pat) : tmp(pat), next(md_next(pat)) {}
-
-    // 在文本串中找目标串的开头位置，并记录所有符合条件的位置
-    vector<int> strStr(const string &text) {
-        int n = text.size(), m = tmp.size();
-        int x = 0; // 文本串中的当前位置
-        int y = 0; // 目标串中的当前位置
-
-        vector<int> matches; // 记录所有匹配位置
-
-        while (x < n) {
-            if (text[x] == tmp[y]) {
-                x++, y++;
-                if (y == m) {
-                    matches.push_back(x - y);
-                    y = next[y]; // 回溯到下一个可能的匹配位置
-                }
-            } else {
-                if (y == 0) {
-                    x++;
-                } else {
-                    y = next[y];
-                }
-            }
+    vector<int> next(m);
+    int c = 0;
+    for (int i = 1; i < m; i++) {
+        char v = pattern[i];
+        while (c && pattern[c] != v) {
+            c = next[c - 1];
         }
-
-        return matches;
+        if (pattern[c] == v) {
+            c++;
+        }
+        next[i] = c;
     }
 
-private:
-    // 计算 next 数组
-    vector<int> md_next(const string &s) {
-        int m = s.size();
-
-        vector<int> next(m + 1);
-        next[0] = -1;
-        if (m == 1) {
-            return next;
+    vector<int> res;
+    c = 0;
+    for (int i = 0; i < text.size(); i++) {
+        char v = text[i];
+        while (c && pattern[c] != v) {
+            c = next[c - 1];
         }
-
-        next[1] = 0;
-
-        int i = 2;
-        int cn = 0;
-        while (i <= m) {
-            if (s[i - 1] == s[cn]) {
-                next[i++] = ++cn;
-            } else if (cn > 0) {
-                cn = next[cn];
-            } else {
-                next[i++] = 0;
-            }
+        if (pattern[c] == v) {
+            c++;
         }
-
-        return next;
+        if (c == m) {
+            res.push_back(i - m + 1);
+            c = next[c - 1];
+        }
     }
-};
+    return res;
+}
 
 class Solution {
-public:
+   public:
     int strStr(string haystack, string needle) {
-        KMP kmp(needle);
+        vector<int> ans = KMP(haystack, needle);
 
-        vector<int> a = kmp.strStr(haystack);
-        int n = a.size();
-
-        if (n == 0)
-            return -1;
-
-        return a[0];
+        return ans.size() == 0 ? -1 : ans[0];
     }
 };
 
