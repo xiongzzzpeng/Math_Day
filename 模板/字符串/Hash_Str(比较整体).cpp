@@ -12,7 +12,7 @@ using u32 = unsigned;
 
 // 字符串哈希
 // 复杂样本转换成数字
-// 完整用法
+// 比较每个整体用法
 class Hash {
    public:
     u64 value(string &s) {
