@@ -4,7 +4,7 @@ using namespace std;
 using i64 = long long;
 
 // hypot + INFINITY
-// coutÊä³öĞ¡Êı
+// coutè¾“å‡ºå°æ•°
 
 void Solve() {
     int N, S, T;
