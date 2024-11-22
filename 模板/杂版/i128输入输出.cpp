@@ -56,9 +56,8 @@ i128 qpow(i128 a, i128 b, i128 mod) {
 }
 
 void Solve() {
-    int n;
-    cin >> n;
-    cout << n;
+    i128 n = read<i128>();
+    write(n);
 }
 
 int main() {
