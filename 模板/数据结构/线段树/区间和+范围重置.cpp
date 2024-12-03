@@ -10,12 +10,7 @@ using PLL = pair<i64, i64>;
 using u64 = unsigned long long;
 using u32 = unsigned;
 
-/*
-线段树
-建树的过程是O(n)
-单次查询的时间复杂度O(logn)
-区间修改O(logn)
-*/
+// 从下标1开始
 
 class SegmentTree {
    public:
@@ -28,21 +23,21 @@ class SegmentTree {
         build(1, n, 1);
     }
 
-    // [l, r] 重置为 val, n 是数组大小
+    // [l, r] 重置val, n是数组大小
     void updateRange(int l, int r, i64 val, int n) {
         update(l, r, val, 1, n, 1);
     }
 
-    // 求 [l, r] 的和
+    //  范围[l, r]的和
     i64 sumRange(int l, int r, int n) {
         return query(l, r, 1, n, 1);
     }
 
    private:
-    vector<int> arr;     // 原始数据数组
-    vector<i64> sum;     // 线段树节点存储区间和
-    vector<bool> flag;   // 是否有懒更新标记
-    vector<i64> change;  // 存储懒更新值
+    vector<int> arr;
+    vector<i64> sum;
+    vector<bool> flag;
+    vector<i64> change;
 
     // 更新父节点
     void up(int i) {
@@ -71,9 +66,9 @@ class SegmentTree {
             sum[i] = arr[l - 1];  // 数组下标从0开始，调整为1-based
         } else {
             int mid = (l + r) / 2;
-            build(l, mid, i * 2);          // 左子树
-            build(mid + 1, r, i * 2 + 1);  // 右子树
-            up(i);                         // 更新当前节点
+            build(l, mid, i * 2);
+            build(mid + 1, r, i * 2 + 1);
+            up(i);
         }
         change[i] = 0;
         flag[i] = false;
