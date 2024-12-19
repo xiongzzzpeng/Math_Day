@@ -7,48 +7,38 @@ using namespace std;
 #define LOCAL
 typedef pair<int, int> PII;
 
-// Dijkstra
-// Ê¹ÓÃ·¶Î§:ÓĞÏòÍ¼£¬±ßÎŞ¸ºÊı
-// ÇóÔ´µãµ½Ã¿¸öµãµÄ×î¶ÌÂ·
+/**
+ * Dijkstraç®—æ³•(O(n^2))
+ * å•æºæœ€çŸ­è·¯æƒ…å†µï¼Œdis[i] èµ·ç‚¹åˆ°içš„æœ€çŸ­è·¯
+ * ä¸èƒ½å¤„ç†å¸¦è´Ÿæƒçš„è¾¹
+ */
 
-
-// ¶şÎ¬Çé¿ö
-int dijkstar_tow(vector<vector<int>> &grid)
-{
+int dijkstar_tow(vector<vector<int>> &grid) {
     int move[] = {-1, 0, 1, 0, -1};
     int n = grid.size(), m = grid[0].size();
     vector<vector<int>> distance(n, vector<int>(m, INT32_MAX));
     distance[0][0] = 0;
     vector<vector<bool>> visited(n, vector<bool>(m, false));
 
-    auto cmp = [](vector<int> &a, vector<int> &b)
-    {
-        return a[2] > b[2];
-    };
+    auto cmp = [](vector<int> &a, vector<int> &b) { return a[2] > b[2]; };
     priority_queue<vector<int>, vector<vector<int>>, decltype(cmp)> heap(cmp);
     heap.push({0, 0, grid[0][0]});
 
-    while (!heap.empty())
-    {
+    while (!heap.empty()) {
         auto u = heap.top();
         heap.pop();
 
         int x = u[0], y = u[1], w = u[2];
-        if (visited[x][y])
-            continue;
+        if (visited[x][y]) continue;
 
-        if (x == n - 1 && y == m - 1)
-            return w;
+        if (x == n - 1 && y == m - 1) return w;
         visited[x][y] = true;
 
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             int nx = x + move[i], ny = y + move[i + 1];
-            if (nx >= 0 && nx < n && ny >= 0 && ny < m && !visited[nx][ny])
-            {
-                int nw = max(w, grid[nx][ny]); // Ò»°ã¸ÄÕâ¾ä
-                if (nw < distance[nx][ny])
-                {
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m && !visited[nx][ny]) {
+                int nw = max(w, grid[nx][ny]);
+                if (nw < distance[nx][ny]) {
                     distance[nx][ny] = nw;
                     heap.push({nx, ny, nw});
                 }
@@ -59,42 +49,29 @@ int dijkstar_tow(vector<vector<int>> &grid)
     return -1;
 }
 
-int dijkstar(vector<vector<int>> &times, int n, int s)
-{
-    // nÍ¼ÖĞµãµÄÊıÁ¿£¬sÊÇÔ´µã
+int dijkstar(vector<vector<int>> &times, int n, int s) {
     vector<vector<PII>> graph(n + 1);
-    for (auto &edge : times)
-        graph[edge[0]].emplace_back(edge[1], edge[2]);
+    for (auto &edge : times) graph[edge[0]].emplace_back(edge[1], edge[2]);
 
-    // ¼ÇÂ¼Ô´µãµ½Ã¿¸öµãµÄ¾àÀë,²¢ÇÒ³õÊ¼»¯
     vector<int> distance(n + 1, INT_MAX);
     distance[s] = 0;
-    // Ã¿¸öµãÊÇ·ñ·ÃÎÊ¹ı
     vector<bool> visited(n + 1, false);
-    // Ğ¡¸ù¶Ñ,Ç°µã£¬ºó¾àÀë
-    auto cmp = [](PII &a, PII &b)
-    {
-        return a.sc > b.sc;
-    };
+    auto cmp = [](PII &a, PII &b) { return a.sc > b.sc; };
     priority_queue<PII, vector<PII>, decltype(cmp)> heap(cmp);
-    // Ô´µãÌí¼Ó
+
     heap.emplace(s, 0);
 
-    while (!heap.empty())
-    {
+    while (!heap.empty()) {
         int u = heap.top().fs;
         heap.pop();
 
-        if (visited[u])
-            continue;
+        if (visited[u]) continue;
         visited[u] = true;
 
-        for (auto &edge : graph[u])
-        {
+        for (auto &edge : graph[u]) {
             int v = edge.fs;
             int w = edge.sc;
-            if (!visited[v] && distance[u] + w < distance[v])
-            {
+            if (!visited[v] && distance[u] + w < distance[v]) {
                 distance[v] = distance[u] + w;
                 heap.emplace(v, distance[v]);
             }
@@ -102,70 +79,57 @@ int dijkstar(vector<vector<int>> &times, int n, int s)
     }
 
     int ans = INT_MIN;
-    for (int i = 1; i <= n; i++)
-    {
-        if (distance[i] == INT_MAX)
-            return -1;
+    for (int i = 1; i <= n; i++) {
+        if (distance[i] == INT_MAX) return -1;
         ans = max(ans, distance[i]);
     }
     return ans;
 }
 
-void issue()
-{
+void issue() {
     int n, m, s;
     cin >> n >> m >> s;
     vector<vector<PII>> graph(n + 1);
 
-    for (int i = 0; i < m; i++)
-    {
+    for (int i = 0; i < m; i++) {
         int u, v, w;
         cin >> u >> v >> w;
         graph[u].emplace_back(v, w);
     }
 
-    // ¼ÇÂ¼Ô´µãµ½Ã¿¸öµãµÄ¾àÀë,²¢ÇÒ³õÊ¼»¯
+    // è®°å½•æºç‚¹åˆ°æ¯ä¸ªç‚¹çš„è·ç¦»,å¹¶ä¸”åˆå§‹åŒ–
     vector<int> distance(n + 1, INT_MAX);
     distance[s] = 0;
-    // Ã¿¸öµãÊÇ·ñ·ÃÎÊ¹ı
+    // æ¯ä¸ªç‚¹æ˜¯å¦è®¿é—®è¿‡
     vector<bool> visited(n + 1, false);
-    // Ğ¡¸ù¶Ñ,Ç°µã£¬ºó¾àÀë
-    auto cmp = [](PII &a, PII &b)
-    {
-        return a.sc > b.sc;
-    };
+    // å°æ ¹å †,å‰ç‚¹ï¼Œåè·ç¦»
+    auto cmp = [](PII &a, PII &b) { return a.sc > b.sc; };
     priority_queue<PII, vector<PII>, decltype(cmp)> heap(cmp);
-    // Ô´µãÌí¼Ó
+    // æºç‚¹æ·»åŠ 
     heap.emplace(s, 0);
 
-    while (!heap.empty())
-    {
+    while (!heap.empty()) {
         int u = heap.top().fs;
         heap.pop();
 
-        if (visited[u])
-            continue;
+        if (visited[u]) continue;
         visited[u] = true;
 
-        for (auto &edge : graph[u])
-        {
+        for (auto &edge : graph[u]) {
             int v = edge.fs;
             int w = edge.sc;
-            if (!visited[v] && distance[u] + w < distance[v])
-            {
+            if (!visited[v] && distance[u] + w < distance[v]) {
                 distance[v] = distance[u] + w;
                 heap.emplace(v, distance[v]);
             }
         }
     }
 
-    for (int i = 1; i <= n; i++)
-        cout << distance[i] << " ";
+    for (int i = 1; i <= n; i++) cout << distance[i] << " ";
     cout << endl;
 }
 
-int main()
-{
+int main() {
     std::ios::sync_with_stdio(false);
     cin.tie(0), cout.tie(0);
 
@@ -176,8 +140,7 @@ int main()
 
     int T = 1;
     // cin >> T;
-    while (T--)
-    {
+    while (T--) {
         issue();
     }
     return 0;

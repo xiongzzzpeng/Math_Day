@@ -7,10 +7,10 @@ using namespace std;
 #define LOCAL
 typedef pair<int, int> PII;
 
-// SPFA
-// 源点到任意点的最短距离,可以有负边
-// 可以判断有没有负环,看到n轮没,则有负环
-// O(n * m)
+/**
+ * SPFA(O(n * m))
+ * 鍙互澶勭悊璐熻竟鐨勬渶鐭矾 dis[i]鏄渶鐭矾
+ */
 
 struct SPFA {
     vector<vector<PII>> graph;
@@ -39,7 +39,7 @@ struct SPFA {
 
     bool spfa(int n) {
         queue<int> q;
-        distance[1] = 0; // 源点
+        distance[1] = 0;
         update[1]++;
         q.push(1);
         enter[1] = true;
@@ -56,9 +56,8 @@ struct SPFA {
                 if (distance[u] + w < distance[v]) {
                     distance[v] = distance[u] + w;
                     if (!enter[v]) {
-                        // 根据题意改，这个是判断负环
-                        if (update[v]++ == n)
-                            return true;
+                        // 涓�鑸敼杩欎釜
+                        if (update[v]++ == n) return true;
                         q.push(v);
                         enter[v] = true;
                     }
