@@ -5,27 +5,43 @@ using namespace std;
 #define sc second
 typedef pair<int, int> PII;
 
-// https://leetcode.cn/problems/find-smallest-letter-greater-than-target/description/
-// ¶þ·ÖÄ£°å
-int low_bound(vector<int> &q, int target)
-{
-    // ±ÕÇø¼ä£¬ l°üÀ¨l£¬[l, size]¶¼ÊÇ>target [0, r]¶¼ÊÇ<target
-    // ×î¼«¶ËµÄÇé¿öÊÇl = q.size() && r = -1¡£
-    // ex£ºq.size() = 5£¬×îºóÒ»¸öÏÂ±êÊÇ4£¬l = 5
-    int l = 0, r = q.size() - 1;
-    while (l <= r)
-    {
-        int mid = l + ((r - l) >> 1);
-        if (q[mid] < target)
-            l = mid + 1; // ´ËÊ±¿Õ¼äÃæÎª[mid + 1, r]
-        else
-            r = mid - 1;
+/**
+ * é—­åŒºé—´äºŒåˆ†æ¨¡æ¿
+ */
+
+int bitset_left(vector<int> a, int target) {
+    int ans = -1;
+    int lo = 0, hi = a.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        // æ‰¾ <= çš„æ•°
+        if (a[mid] <= target) {
+            ans = mid;
+            lo = mid + 1;
+        } else {
+            hi = mid - 1;
+        }
     }
-    return l;
+    return ans;
 }
 
-int main()
-{
+int bitset_right(vector<int> a, int target) {
+    int ans = -1;
+    int lo = 0, hi = a.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        // æ‰¾ >= çš„æ•°
+        if (a[mid] >= target) {
+            ans = mid;
+            hi = mid - 1;
+        } else {
+            lo = mid + 1;
+        }
+    }
+    return ans;
+}
+
+int main() {
     std::ios::sync_with_stdio(false);
     cin.tie(0);
 
