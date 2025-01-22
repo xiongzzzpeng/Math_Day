@@ -11,47 +11,46 @@ struct DSU {
     vector<int> father;
     int set;
 
-    // ³õÊ¼»¯
+    // åˆå§‹åŒ–
     DSU(int n) : father(n + 2, 0), set(n) {
-        for (int i = 0; i <= n; i++)
-            father[i] = i;
+        for (int i = 0; i <= n; i++) father[i] = i;
     }
 
-    // µİ¹éµ÷ÓÃ°æ±¾find
+    // é€’å½’è°ƒç”¨ç‰ˆæœ¬find
     int find(int i) {
-        if (i != father[i])
+        if (i != father[i]) {
             father[i] = find(father[i]);
+        }
         return father[i];
     }
 
-    // ÅĞ¶ÏÊÇ²»ÊÇÍ¬Ò»¸öÀÏ´ó
-    bool isSameSet(int x, int y) {
+    // åˆ¤æ–­æ˜¯ä¸æ˜¯åŒä¸€ä¸ªè€å¤§
+    bool same(int x, int y) {
         return find(x) == find(y);
     }
 
-    // ºÏ²¢x¸úy
-    void unionSets(int x, int y) {
+    // åˆå¹¶xè·Ÿy
+    void merge(int x, int y) {
         int fx = find(x), fy = find(y);
-        if (fx != fy)
-            father[fx] = fy;
+        if (fx != fy) father[fx] = fy;
     }
 };
 
 void issue() {
     int n, m;
     cin >> n >> m;
-    // µ÷ÓÃ£¬¹¹ÔìÒ»¸ö´óĞ¡ÊÇnµÄÊı×é
+    // è°ƒç”¨ï¼Œæ„é€ ä¸€ä¸ªå¤§å°æ˜¯nçš„æ•°ç»„
     DSU ui(n);
     while (m--) {
         int a, x, y;
         cin >> a >> x >> y;
         if (a == 2) {
-            if (ui.isSameSet(x, y))
+            if (ui.same(x, y))
                 cout << "Y" << endl;
             else
                 cout << "N" << endl;
         } else
-            ui.unionSets(x, y);
+            ui.merge(x, y);
     }
 }
 
