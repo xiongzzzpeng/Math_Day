@@ -16,7 +16,7 @@ struct DSU {
         for (int i = 0; i <= n; i++) father[i] = i;
     }
 
-    // 递归调用版本find
+    // 查找在哪个连通块
     int find(int i) {
         if (i != father[i]) {
             father[i] = find(father[i]);
@@ -24,15 +24,19 @@ struct DSU {
         return father[i];
     }
 
-    // 判断是不是同一个老大
+    // 判断是不是在同一个连通块
     bool same(int x, int y) {
         return find(x) == find(y);
     }
 
     // 合并x跟y
-    void merge(int x, int y) {
+    bool merge(int x, int y) {
         int fx = find(x), fy = find(y);
-        if (fx != fy) father[fx] = fy;
+        if (fx == fy) {
+            return false;
+        }
+        father[fx] = fy;
+        return true;
     }
 };
 
