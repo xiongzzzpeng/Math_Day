@@ -42,31 +42,54 @@ string big_add(const string &a, const string &b) {
 }
 
 // 高精度减法
-void Hight_sub(char *s1, char *s2, int *a, int *b, int *c) {
-    char s3[N] = {'0'};
-    int flag = 0;
-    if (!compare(s1, s2))  // s1 < s2,swap
-    {
-        flag = 1;
-        strcpy(s3, s1);
-        strcpy(s1, s2);
-        strcpy(s2, s3);
+string big_sub(const string &a, const string &b) {
+    auto compare = [&](string &a, string &b) -> bool {
+        if (a.size() != b.size()) return a.size() > b.size();
+        return a >= b;
+    };
+
+    string A = a, B = b;
+    bool negative = false;
+
+    // 如果 a < b，则交换并标记为负数
+    if (!compare(A, B)) {
+        swap(A, B);
+        negative = true;
     }
-    ll la = strlen(s1), lb = strlen(s2);
-    for (int i = 0; i < la; i++) a[la - i] = s1[i] - '0';
-    for (int i = 0; i < lb; i++) b[lb - i] = s2[i] - '0';
-    ll lc = max(la, lb);
-    for (int i = 1; i <= lc; i++) {
-        if (a[i] < b[i]) {
-            a[i + 1]--;
-            a[i] += 10;
+
+    string result;
+    int borrow = 0;
+    int i = A.size() - 1;
+    int j = B.size() - 1;
+
+    while (i >= 0 || j >= 0) {
+        int digit_a = (i >= 0) ? (A[i] - '0') : 0;
+        int digit_b = (j >= 0) ? (B[j] - '0') : 0;
+
+        int diff = digit_a - digit_b - borrow;
+        if (diff < 0) {
+            diff += 10;
+            borrow = 1;
+        } else {
+            borrow = 0;
         }
-        c[i] = a[i] - b[i];
+
+        result.push_back(diff + '0');
+        i--;
+        j--;
     }
-    while (c[lc] == 0 && lc > 1) lc--;
-    if (flag == 1) cout << "-";
-    for (int i = lc; i > 0; i--) cout << c[i];
-    cout << endl;
+
+    // 去除前导零
+    while (result.size() > 1 && result.back() == '0') {
+        result.pop_back();
+    }
+
+    reverse(result.begin(), result.end());
+
+    // 如果为负数且结果不为0，添加负号
+    if (negative && result != "0") result.insert(result.begin(), '-');
+
+    return result;
 }
 
 // 高精度乘法
