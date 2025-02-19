@@ -8,7 +8,7 @@ using ll = long long;
 using PII = pair<int, int>;
 using PLL = pair<ll, ll>;
 
-// ´ÓÏÂ±êÒ»¿ªÊ¼µÄ
+// ä»ä¸‹æ ‡ä¸€å¼€å§‹çš„
 
 struct Differe {
     const int MAXN = 1002;
@@ -16,21 +16,21 @@ struct Differe {
     vector<int> diff_1;
     vector<vector<int>> diff_2;
 
-    // ³õÊ¼»¯Ò»Î¬²î·Ö
+    // åˆå§‹åŒ–ä¸€ç»´å·®åˆ†
     Differe(int n) : n(n) {
         diff_1.resize(MAXN, 0);
     }
-    // ³õÊ¼»¯¶şÎ¬²î·Ö
+    // åˆå§‹åŒ–äºŒç»´å·®åˆ†
     Differe(int n, int q) : n(n), q(q) {
         diff_2.resize(MAXN, vector<int>(MAXN, 0));
     }
 
-    // Ìí¼ÓÒ»Î¬²î·Ö
+    // æ·»åŠ ä¸€ç»´å·®åˆ†
     void add_1(int l, int r, int k) {
         diff_1[l] += k;
         diff_1[r + 1] = -k;
     }
-    // Ìí¼Ó¶şÎ¬²î·Ö
+    // æ·»åŠ äºŒç»´å·®åˆ†
     void add_2(int a, int b, int c, int d, int k) {
         diff_2[a][b] += k;
         diff_2[c + 1][b] -= k;
@@ -38,14 +38,14 @@ struct Differe {
         diff_2[c + 1][d + 1] += k;
     }
 
-    // »¹Ô­Ò»Î¬²î·Ö
+    // è¿˜åŸä¸€ç»´å·®åˆ†
     void build_1() {
         for (int i = 1; i < MAXN; i++) {
             diff_1[i] += diff_1[i - 1];
         }
     }
 
-    // »¹Ô­¶şÎ¬²î·Ö
+    // è¿˜åŸäºŒç»´å·®åˆ†
     void build_2() {
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= n; j++) {
@@ -62,8 +62,7 @@ void Solve() {
     Differe differe_1(n);
     differe_1.add_1(1, 3, 2);
     differe_1.build_1();
-    for (int i = 1; i <= n; i++)
-        cout << test[i] + differe_1.diff_1[i] << " ";
+    for (int i = 1; i <= n; i++) cout << test[i] + differe_1.diff_1[i] << " ";
     cout << endl;
 
     Differe differe(n, q);
