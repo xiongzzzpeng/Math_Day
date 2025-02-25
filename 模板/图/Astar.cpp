@@ -7,40 +7,38 @@ using namespace std;
 #define LOCAL
 typedef pair<int, int> PII;
 
-// A*Ëã·¨
-// ÓÃÓÚ¶şÎ¬Íø¸ñÖĞ
-// grid[i][j] == 0 ´ú±íÕÏ°­
-// grid[i][j] == 1 ´ú±íµÀÂ·
-// Ö»ÄÜ×ßÉÏ¡¢ÏÂ¡¢×ó¡¢ÓÒ£¬²»°üÀ¨Ğ±Ïß·½Ïò
-// ·µ»Ø´Ó(startX, startY)µ½(targetX, targetY)µÄ×î¶Ì¾àÀë
+// A*ç®—æ³•
+// ç”¨äºäºŒç»´ç½‘æ ¼ä¸­
+// grid[i][j] == 0 ä»£è¡¨éšœç¢
+// grid[i][j] == 1 ä»£è¡¨é“è·¯
+// åªèƒ½èµ°ä¸Šã€ä¸‹ã€å·¦ã€å³ï¼Œä¸åŒ…æ‹¬æ–œçº¿æ–¹å‘
+// è¿”å›ä»(startX, startY)åˆ°(targetX, targetY)çš„æœ€çŸ­è·ç¦»
 
-// Âü¹ş¶Ù¾àÀë,²»ÄÜ×ßĞ±Ïß
+// æ›¼å“ˆé¡¿è·ç¦»,ä¸èƒ½èµ°æ–œçº¿
 int f1(int x, int y, int targetX, int targetY) {
     return abs(targetX - x) + abs(targetY - y);
 }
 
-// ¶Ô½ÇÏß¾àÀë,¿ÉÒÔĞ±Ïß
+// å¯¹è§’çº¿è·ç¦»,å¯ä»¥æ–œçº¿
 int f2(int x, int y, int targetX, int targetY) {
     return max(abs(targetX - x), abs(targetY - y));
 }
 
-// Å·Ê½¾àÀë
+// æ¬§å¼è·ç¦»
 double f3(int x, int y, int targetX, int targetY) {
     return sqrt(pow(targetX - x, 2) + pow(targetY - y, 2));
 }
 
-int Astar(vector<vector<int>> &grid, int startX, int startY, int targetX,
-          int targetY) {
+int Astar(vector<vector<int>> &grid, int startX, int startY, int targetX, int targetY) {
     int n = grid.size(), m = grid[0].size();
 
-    if (grid[startX][startY] == 0 || grid[targetX][targetY] == 0)
-        return -1;
+    if (grid[startX][startY] == 0 || grid[targetX][targetY] == 0) return -1;
 
     vector<vector<int>> distance(n, vector<int>(m, INT32_MAX));
     distance[startX][startY] = 1;
     vector<vector<bool>> visited(n, vector<bool>(m, false));
     priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> heap;
-    // f1¿É»»
+    // f1å¯æ¢
     heap.push({1 + f1(startX, startY, targetX, targetY), startX, startY});
     int move[] = {-1, 0, 1, -1, 0};
 
@@ -52,19 +50,18 @@ int Astar(vector<vector<int>> &grid, int startX, int startY, int targetX,
         int x = cur[1];
         int y = cur[2];
 
-        if (visited[x][y])
-            continue;
+        if (visited[x][y]) continue;
         visited[x][y] = true;
 
-        if (x == targetX && y == targetY)
-            return distance[x][y];
+        if (x == targetX && y == targetY) return distance[x][y];
 
         for (int i = 0; i < 4; i++) {
             int nx = x + move[i], ny = y + move[i + 1];
 
-            if (nx >= 0 && nx < n && ny >= 0 && ny < m && grid[nx][ny] == 1 && !visited[nx][ny] && distance[x][y] + 1 < distance[nx][ny]) {
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m && grid[nx][ny] == 1 && !visited[nx][ny] &&
+                distance[x][y] + 1 < distance[nx][ny]) {
                 distance[nx][ny] = distance[x][y] + 1;
-                // f1¿É»»
+                // f1å¯æ¢
                 heap.push({distance[nx][ny] + f1(nx, ny, targetX, targetY), nx, ny});
             }
         }
