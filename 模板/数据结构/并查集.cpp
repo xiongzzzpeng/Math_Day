@@ -8,35 +8,41 @@ using namespace std;
 typedef pair<int, int> PII;
 
 struct DSU {
-    vector<int> father;
-    int set;
+    vector<int> f, siz;
 
-    // 初始化
-    DSU(int n) : father(n + 2, 0), set(n) {
-        for (int i = 0; i <= n; i++) father[i] = i;
+    DSU(int n) {
+        init(n);
     }
 
-    // 查找在哪个连通块
-    int find(int i) {
-        if (i != father[i]) {
-            father[i] = find(father[i]);
+    void init(int n) {
+        f.resize(n);
+        iota(f.begin(), f.end(), 0);
+        siz.assign(n, 1);
+    }
+
+    int find(int x) {
+        while (x != f[x]) {
+            x = f[x] = f[f[x]];
         }
-        return father[i];
+        return x;
     }
 
-    // 判断是不是在同一个连通块
     bool same(int x, int y) {
         return find(x) == find(y);
     }
 
-    // 合并x跟y
     bool merge(int x, int y) {
-        int fx = find(x), fy = find(y);
-        if (fx == fy) {
+        x = find(x), y = find(y);
+        if (x == y) {
             return false;
         }
-        father[fx] = fy;
+        siz[x] += siz[y];
+        f[y] = x;
         return true;
+    }
+
+    int size(int x) {
+        return siz[find(x)];
     }
 };
 
