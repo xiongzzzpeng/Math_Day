@@ -23,6 +23,8 @@ sum: i -= 最右侧1 3：0011 - 0001 = 2 2： 0010 - 0010 = 0
 从后往前遍历+同时更新sum：知道a[i]后面有几个比他小的数 更新一次就x次就是x元组
 */
 
+constexpr int mod = 1e9;
+
 template <typename T>
 class Fenwick {
    public:
@@ -30,43 +32,50 @@ class Fenwick {
         init(n_);
     }
 
-    // 在i的位置添加val
+    // 在位置i（0-based）添加val
     void add(int i, const T& val) {
+        i++;
         for (; i <= n; i += i & -i) {
-            a[i] += val;
+            a[i] = (a[i] + val) % mod;
         }
     }
 
-    // 求sum([1, i])
+    // 计算前缀和[0, i]（0-based）
     T sum(int i) {
+        i++;
         T ans{};
         for (; i > 0; i -= i & -i) {
-            ans += a[i];
+            ans = (ans + a[i]) % mod;
         }
         return ans;
     }
 
-    // 求sum([r, l])
+    // 计算区间和[left, right]（0-based闭区间）
     T rangeSum(int left, int right) {
-        return sum(right) - sum(left - 1);
+        T s = sum(right) - (left > 0 ? sum(left - 1) : T());
+        s %= mod;
+        if (s < 0) {
+            s += mod;
+        }
+        return s;
     }
 
-    // 找 <= k的最大下标
+    // 找到最大的i使得前缀和[0, i] <= k，返回0-based索引
     int select(const T& k) {
         int res = 0;
         T cur{};
-        for (int i = 1 << __lg(n); i; i /= 2) {
+        for (int i = 1 << std::__lg(n); i > 0; i >>= 1) {
             if (res + i <= n && cur + a[res + i] <= k) {
                 res += i;
                 cur += a[res];
             }
         }
-        return res;
+        return res - 1;
     }
 
    private:
     int n;
-    vector<T> a;
+    std::vector<T> a;
 
     void init(int n_) {
         n = n_;
