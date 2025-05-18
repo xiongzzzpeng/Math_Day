@@ -6,45 +6,40 @@ using namespace std;
 #define sc second
 typedef pair<int, int> PII;
 
-// ×î´ó¹«Ô¼Êı
-int gcd(int a, int b)
-{
+// ä»¥2ä¸ºåº•çš„å¯¹æ•°ä¸Šå–æ•´
+int ceiLog(int n) {
+    return __lg(2 * n - 1);
+}
+
+// æœ€å¤§å…¬çº¦æ•°
+int gcd(int a, int b) {
     return __gcd(a, b);
 }
 
-// ×îĞ¡¹«±¶Êı
-int lcm(int a, int b)
-{
+// æœ€å°å…¬å€æ•°
+int lcm(int a, int b) {
     return abs(a * b) / gcd(a, b);
 }
 
-// ÅĞ¶ÏÖÊÊı
-bool prime(int x)
-{
-    if (x == 0 || x == 1)
-        return false;
+// åˆ¤æ–­è´¨æ•°
+bool prime(int x) {
+    if (x == 0 || x == 1) return false;
     for (int i = 2; i * i <= x; i++)
-        if (x % i == 0)
-            return false;
+        if (x % i == 0) return false;
     return true;
 }
 
-// ÕÒ³öÏà¹ØÒò×Ó
-void factor(int x)
-{
+// æ‰¾å‡ºç›¸å…³å› å­
+void factor(int x) {
     vector<int> cnt(10);
-    for (int i = 1; i * i <= x; i++)
-    {
-        if (x % i != 0)
-            continue;
+    for (int i = 1; i * i <= x; i++) {
+        if (x % i != 0) continue;
         cnt[i]++;
-        if (i * i < x)
-            cnt[x / i]++;
+        if (i * i < x) cnt[x / i]++;
     }
 }
 
-int main()
-{
+int main() {
     std::ios::sync_with_stdio(false);
     cin.tie(0), cout.tie(0);
     freopen("xzp.in", "r", stdin);
