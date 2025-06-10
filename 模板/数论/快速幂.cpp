@@ -7,15 +7,15 @@ using namespace std;
 #define LOCAL
 typedef pair<int, int> PII;
 
-// 快速幂(a的b次幂)
-i64 qpow(i64 a, i64 b, int mod) {
-    i64 res = 1;
-    while (b) {
+using u64 = unsigned long long;
+
+// 蹇�熷箓(a鐨刡娆″箓)
+template <class T>
+constexpr T qpow(T a, u64 b, T res = 1) {
+    for (; b != 0; b /= 2, a *= a) {
         if (b & 1) {
-            res = res * a % mod;
+            res *= a;
         }
-        a = a * a % mod;
-        b >>= 1;
     }
     return res;
 }
@@ -23,7 +23,7 @@ i64 qpow(i64 a, i64 b, int mod) {
 void issue() {
     i64 a, b;
     cin >> a >> b;
-    cout << qpow(a, b, 1e9 + 7) << endl;
+    cout << qpow<i64>(a, b, 1e9 + 7) << endl;
 }
 
 int main() {
