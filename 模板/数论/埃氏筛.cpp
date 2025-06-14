@@ -10,7 +10,7 @@ using PLL = pair<i64, i64>;
 using u64 = unsigned long long;
 using u32 = unsigned;
 
-// °£ÊÏÉ¸, Ñ¡·¶Î§ÄÚÖÊÊıµÄ¸öÊı
+// åŸƒæ°ç­›, é€‰èŒƒå›´å†…è´¨æ•°çš„ä¸ªæ•°
 // O(n * log(log))
 
 void Solve() {

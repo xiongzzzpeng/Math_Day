@@ -8,12 +8,12 @@ using ll = long long;
 using PII = pair<int, int>;
 using PLL = pair<ll, ll>;
 
-// ×î´ó¹«Ô¼Êı (Õ·×ªÏà³ı) O(log a ^ 3)
+// æœ€å¤§å…¬çº¦æ•° (è¾—è½¬ç›¸é™¤) O(log a ^ 3)
 ll gcd(ll a, ll b) {
     return b == 0 ? a : gcd(b, (a % b));
 }
 
-// ×îĞ¡¹«±¶Êı ¼ÆËãË³Ğò²»ÄÜ»»
+// æœ€å°å…¬å€æ•° è®¡ç®—é¡ºåºä¸èƒ½æ¢
 ll LCM(ll a, ll b) {
     return a / gcd(a, b) * b;
 }
