@@ -1,25 +1,25 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
-#define endl "\n"
-#define fs first
-#define sc second
-#define LOCAL
-typedef pair<int, int> PII;
 
-// Floyd算法
-// 得到任意两点的最短距离，无负环图适用
+using i64 = long long;
+
+constexpr i64 INF = 1E18;
+
+// Floyd绠楁硶
+// 寰楀埌浠绘剰涓ょ偣鐨勬渶鐭窛绂伙紝鏃犺礋鐜浘閫傜敤
 // O(n^3)
-
-void floyd(vector<vector<int>> &distance, int n) {
-    // 找一个跳点,看路劲是不是能变小
-    // 转移方程就是:dist[i][j] = min(dist[i][j], dist[i][mid]+dist[mid][j])
-
-    for (int mid = 0; mid < n; mid++) {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (distance[i][mid] != INT32_MAX && distance[mid][j] != INT32_MAX && distance[i][j] > distance[i][mid] + distance[mid][j])
-                    distance[i][j] = distance[i][mid] + distance[mid][j];
+void floyed(vector<vector<int>> &dist, bool &negative_cycle) {
+    int n = dist.size();
+    negative_cycle = false;
+    for (int k = 0; k < n; ++k) {
+        for (int From = 0; From < n; ++From) {
+            for (int To = 0; To < n; ++To) {
+                if (dist[From][k] < INF && dist[k][To] < INF) {
+                    dist[From][To] = min(dist[From][To], dist[From][k] + dist[k][To]);
+                }
+                if (From == To && dist[From][To] < 0) {
+                    negative_cycle = true;
+                }
             }
         }
     }
@@ -42,7 +42,8 @@ void Solve() {
         }
     }
 
-    floyd(distance, n);
+    bool negative_cycle;
+    floyed(distance, negative_cycle);
 
     int ans = 0;
     for (int i = 1; i < m; i++) {
