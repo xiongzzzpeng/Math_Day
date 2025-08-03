@@ -26,9 +26,16 @@ i64 qpow(i64 a, i64 b, i64 mod) {
     return res;
 }
 
-i64 inv(i64 a, i64 b, i64 mod) {
-    i64 res = qpow(b, mod - 2, mod);
-    return ((a % mod) * res) % mod;
+constexpr int MOD = 998244353;
+
+i64 inv(i64 a) {
+    i64 r = 1, p = MOD - 2;
+    while (p) {
+        if (p & 1) r = r * a % MOD;
+        a = a * a % MOD;
+        p >>= 1;
+    }
+    return r;
 }
 
 // (1 | n!)的值

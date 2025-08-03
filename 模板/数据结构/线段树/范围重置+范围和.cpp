@@ -1,111 +1,85 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define endl "\n"
-#define fs first
-#define sc second
-#define LOCAL
+
 using i64 = long long;
-using PII = pair<int, int>;
-using PLL = pair<i64, i64>;
-using u64 = unsigned long long;
-using u32 = unsigned;
 
-// 从下标1开始
+constexpr int MOD = 998244353;
 
-class SegmentTree {
-   public:
-    SegmentTree(vector<int>& inputArr) {
-        int n = inputArr.size();
-        arr = inputArr;
-        sum.resize(4 * n);
-        change.resize(4 * n);
-        flag.resize(4 * n, false);
-        build(1, n, 1);
+i64 inv(i64 a) {
+    i64 r = 1, p = MOD - 2;
+    while (p) {
+        if (p & 1) r = r * a % MOD;
+        a = a * a % MOD;
+        p >>= 1;
     }
+    return r;
+}
 
-    // [l, r] 重置val, n是数组大小
-    void updateRange(int l, int r, i64 val, int n) {
-        update(l, r, val, 1, n, 1);
+struct SegTree {
+    i64 n;
+    vector<i64> sum, lazy;
+    vector<bool> marked;
+    SegTree(i64 _n) {
+        n = _n;
+        sum.assign(4 * n, 0);
+        lazy.assign(4 * n, 0);
+        marked.assign(4 * n, 0);
     }
-
-    //  范围[l, r]的和
-    i64 sumRange(int l, int r, int n) {
-        return query(l, r, 1, n, 1);
+    void push(i64 v, i64 tl, i64 tr) {
+        if (!marked[v]) return;
+        sum[v] = lazy[v] * (tr - tl + 1) % MOD;
+        if (tl != tr) {
+            lazy[v * 2] = lazy[v * 2 + 1] = lazy[v];
+            marked[v * 2] = marked[v * 2 + 1] = 1;
+        }
+        marked[v] = 0;
     }
-
-   private:
-    vector<int> arr;
-    vector<i64> sum;
-    vector<bool> flag;
-    vector<i64> change;
-
-    // 更新父节点
-    void up(int i) {
-        sum[i] = sum[i * 2] + sum[i * 2 + 1];
-    }
-
-    // 懒更新操作
-    void lazy(int i, i64 v, int n) {
-        sum[i] = v * n;
-        change[i] = v;
-        flag[i] = true;
-    }
-
-    // 下发懒更新信息
-    void down(int i, int ln, int rn) {
-        if (flag[i]) {
-            lazy(i * 2, change[i], ln);
-            lazy(i * 2 + 1, change[i], rn);
-            flag[i] = false;  // 清除当前节点的懒更新标记
+    void build(vector<i64> &a, i64 v, i64 tl, i64 tr) {
+        if (tl == tr)
+            sum[v] = a[tl];
+        else {
+            i64 tm = (tl + tr) / 2;
+            build(a, v * 2, tl, tm);
+            build(a, v * 2 + 1, tm + 1, tr);
+            sum[v] = (sum[v * 2] + sum[v * 2 + 1]) % MOD;
         }
     }
 
-    // 建立线段树
-    void build(int l, int r, int i) {
-        if (l == r) {
-            sum[i] = arr[l - 1];  // 数组下标从0开始，调整为1-based
+    // 区间赋值
+    // v是起始位置，tl是开始的位置，tr是结束的位置一般是1和n。
+    void range_set(i64 v, i64 tl, i64 tr, i64 l, i64 r, i64 val) {
+        push(v, tl, tr);
+        if (l > r) return;
+        if (l == tl && r == tr) {
+            lazy[v] = val;
+            marked[v] = 1;
+            push(v, tl, tr);
         } else {
-            int mid = (l + r) / 2;
-            build(l, mid, i * 2);
-            build(mid + 1, r, i * 2 + 1);
-            up(i);
-        }
-        change[i] = 0;
-        flag[i] = false;
-    }
-
-    // 区间更新操作
-    void update(int jobl, int jobr, i64 jobv, int l, int r, int i) {
-        if (jobl <= l && r <= jobr) {
-            lazy(i, jobv, r - l + 1);
-        } else {
-            int mid = (l + r) / 2;
-            down(i, mid - l + 1, r - mid);
-            if (jobl <= mid) {
-                update(jobl, jobr, jobv, l, mid, i * 2);
-            }
-            if (jobr > mid) {
-                update(jobl, jobr, jobv, mid + 1, r, i * 2 + 1);
-            }
-            up(i);
+            i64 tm = (tl + tr) / 2;
+            range_set(v * 2, tl, tm, l, min(r, tm), val);
+            range_set(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, val);
+            sum[v] = (sum[v * 2] + sum[v * 2 + 1]) % MOD;
         }
     }
 
-    // 区间查询操作
-    i64 query(int jobl, int jobr, int l, int r, int i) {
-        if (jobl <= l && r <= jobr) {
-            return sum[i];
+    i64 range_sum(i64 v, i64 tl, i64 tr, i64 l, i64 r) {
+        push(v, tl, tr);
+        if (l > r) return 0;
+        if (l == tl && r == tr) return sum[v];
+        i64 tm = (tl + tr) / 2;
+        return (range_sum(v * 2, tl, tm, l, min(r, tm)) + range_sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)) % MOD;
+    }
+
+    // 得到数组元素
+    void get_vals(i64 v, i64 tl, i64 tr, vector<i64> &res) {
+        push(v, tl, tr);
+        if (tl == tr)
+            res[tl] = sum[v];
+        else {
+            i64 tm = (tl + tr) / 2;
+            get_vals(v * 2, tl, tm, res);
+            get_vals(v * 2 + 1, tm + 1, tr, res);
         }
-        int mid = (l + r) / 2;
-        down(i, mid - l + 1, r - mid);
-        i64 ans = 0;
-        if (jobl <= mid) {
-            ans += query(jobl, jobr, l, mid, i * 2);
-        }
-        if (jobr > mid) {
-            ans += query(jobl, jobr, mid + 1, r, i * 2 + 1);
-        }
-        return ans;
     }
 };
 
@@ -113,35 +87,34 @@ void Solve() {
     int n, m;
     cin >> n >> m;
 
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
+    vector<i64> a(n + 1);
+    for (int i = 1; i <= n; i++) {
         cin >> a[i];
     }
 
-    SegmentTree seg(a);
+    SegTree st(n);
+    st.build(a, 1, 1, n);
 
     while (m--) {
-        int op, l, r;
-        i64 val;
-        cin >> op;
-        if (op == 1) {
-            cin >> l >> r >> val;
-            seg.updateRange(l, r, val, n);
-        } else {
-            cin >> l >> r;
-            cout << seg.sumRange(l, r, n) << "\n";
-        }
+        int l, r;
+        cin >> l >> r;
+        i64 tmp = st.range_sum(1, 1, n, l, r);
+        i64 len = r - l + 1;
+        i64 avg = tmp * inv(len) % MOD;
+        st.range_set(1, 1, n, l, r, avg);
+    }
+
+    vector<i64> ans(n + 1);
+    st.get_vals(1, 1, n, ans);
+
+    for (int i = 1; i <= n; i++) {
+        cout << ans[i] << " \n"[i == n];
     }
 }
 
 int main() {
     std::ios::sync_with_stdio(false);
     cin.tie(0);
-
-#ifdef LOCAL
-    freopen("zcy.in", "r", stdin);
-    freopen("zcy.out", "w", stdout);
-#endif
 
     int T = 1;
     // cin >> T;
