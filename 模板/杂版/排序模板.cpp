@@ -6,131 +6,107 @@ using namespace std;
 typedef pair<int, int> PII;
 const int N = 1e6 + 10;
 
-// ÅÅĞòÄ£°å
+// æ’åºæ¨¡æ¿
 // https://www.luogu.com.cn/problem/P1177
 
-// ¿ìÅÅÄ£°å£¬¿ÉÄÜ»á±ä³ÉO(n^2)
-void quick_sort(vector<int> &q, int l, int r)
-{
-    if (l >= r)
+// å¿«æ’æ¨¡æ¿ï¼Œå¯èƒ½ä¼šå˜æˆO(n^2)
+void quick_sort(vector<int> a, int lo, int hi) {
+    if (lo >= hi) {
         return;
-    // ·Ö½çµã,Á½¸öÖ¸Õë
-    int x = q[l], i = l - 1, j = r + 1;
-    while (i < j)
-    {
-        // ºóÃæµÄÊıĞ¡ÓÚÄ¿±êÖµ£¬¾ÍÍùºó
-        do
-            i++;
-        while (q[i] < x);
-        do
-            j--;
-        while (q[j] > x);
-        if (i < j)
-            swap(q[i], q[j]);
     }
-    // ´¦ÀíÁ½¶Î
-    quick_sort(q, l, j);
-    quick_sort(q, j + 1, r);
+
+    int pivot = a[lo];
+    int i = lo, j = hi;
+
+    while (i <= j) {
+        while (a[i] < pivot) i++;
+        while (a[j] > pivot) j--;
+        if (i <= j) {
+            swap(a[i], a[j]);
+            i++, j--;
+        }
+    }
+
+    quick_sort(a, lo, j);
+    quick_sort(a, i, hi);
 }
 
-// ¹é²¢ÅÅĞò(O(n^2))
+// å½’å¹¶æ’åº(O(n^2))
 int tem[N];
-void merge_sort(vector<int> &q, int l, int r)
-{
-    if (l >= r)
-        return;
+void merge_sort(vector<int>& q, int l, int r) {
+    if (l >= r) return;
     int mid = l + ((r - l) >> 1);
-    // µİ¹éÅÅ×ó±ßÓÒ±ß
+    // é€’å½’æ’å·¦è¾¹å³è¾¹
     merge_sort(q, l, mid), merge_sort(q, mid + 1, r);
-    // ¹é²¢,kÊÇ¼ÇÂ¼×ÜÊı
+    // å½’å¹¶,kæ˜¯è®°å½•æ€»æ•°
     int k = 0, i = l, j = mid + 1;
-    while (i <= mid && j <= r)
-    {
+    while (i <= mid && j <= r) {
         if (q[i] <= q[j])
             tem[k++] = q[i++];
         else
             tem[k++] = q[j++];
     }
-    // ÄÃÊ£ÏÂµÄ
-    while (i <= mid)
-        tem[k++] = q[i++];
-    while (j <= r)
-        tem[k++] = q[j++];
-    // ÄÃ»Ø
-    for (i = l, j = 0; i <= r; i++, j++)
-        q[i] = tem[j];
+    // æ‹¿å‰©ä¸‹çš„
+    while (i <= mid) tem[k++] = q[i++];
+    while (j <= r) tem[k++] = q[j++];
+    // æ‹¿å›
+    for (i = l, j = 0; i <= r; i++, j++) q[i] = tem[j];
 }
 
-// ÍØÆËÅÅĞò,leetcode°æ
-vector<int> findOrder(int num, vector<vector<int>> &pre)
-{
-    vector<vector<int>> graph(num); // ÁÚ½Ó±í
-    vector<int> indegree(num, 0);   // Èë¶È
-    for (auto &edge : pre)
-    {
+// æ‹“æ‰‘æ’åº,leetcodeç‰ˆ
+vector<int> findOrder(int num, vector<vector<int>>& pre) {
+    vector<vector<int>> graph(num);  // é‚»æ¥è¡¨
+    vector<int> indegree(num, 0);    // å…¥åº¦
+    for (auto& edge : pre) {
         graph[edge[1]].push_back(edge[0]);
         indegree[edge[0]]++;
     }
 
     queue<int> q;
-    for (int i = 0; i < num; i++)
-    {
-        if (indegree[i] == 0)
-            q.push(i);
+    for (int i = 0; i < num; i++) {
+        if (indegree[i] == 0) q.push(i);
     }
 
     vector<int> order;
-    while (!q.empty())
-    {
+    while (!q.empty()) {
         int cur = q.front();
         q.pop();
         order.push_back(cur);
 
-        for (int next : graph[cur])
-        {
-            if (--indegree[next] == 0)
-                q.push(next);
+        for (int next : graph[cur]) {
+            if (--indegree[next] == 0) q.push(next);
         }
     }
 
     return order.size() == num ? order : vector<int>();
 }
 
-// ÍØÆËÅÅĞò,ÊäÈëÁ÷°æ
-struct Order
-{
-    void findOrder(vector<vector<int>> &graph, vector<int> &indegree, vector<int> &ans, int n)
-    {
+// æ‹“æ‰‘æ’åº,è¾“å…¥æµç‰ˆ
+struct Order {
+    void findOrder(vector<vector<int>>& graph, vector<int>& indegree, vector<int>& ans, int n) {
         queue<int> q;
-        for (int i = 1; i <= n; i++)
-        {
-            if (indegree[i] == 0)
-                q.push(i);
+        for (int i = 1; i <= n; i++) {
+            if (indegree[i] == 0) q.push(i);
         }
 
-        while (!q.empty())
-        {
+        while (!q.empty()) {
             int cur = q.front();
             q.pop();
             ans.push_back(cur);
 
-            for (auto next : graph[cur])
-            {
-                if (--indegree[next] == 0)
-                    q.push(next);
+            for (auto next : graph[cur]) {
+                if (--indegree[next] == 0) q.push(next);
             }
         }
     }
 
-    void issue()
-    {
-        int n, m; // n¸öµã£¬mÌõ±ß
+    void issue() {
+        int n, m;  // nä¸ªç‚¹ï¼Œmæ¡è¾¹
         cin >> n >> m;
-        vector<vector<int>> graph(n + 1); // Í¼
-        vector<int> indegree(n + 1, 0);   // Èë¶È
+        vector<vector<int>> graph(n + 1);  // å›¾
+        vector<int> indegree(n + 1, 0);    // å…¥åº¦
 
-        for (int i = 0; i < m; i++)
-        {
+        for (int i = 0; i < m; i++) {
             int from, to;
             cin >> from >> to;
             graph[from].push_back(to);
@@ -140,28 +116,22 @@ struct Order
         vector<int> ans;
         findOrder(graph, indegree, ans, n);
 
-        if (ans.size() == n)
-        {
-            for (int i = 0; i < n - 1; i++)
-                cout << ans[i] << " ";
+        if (ans.size() == n) {
+            for (int i = 0; i < n - 1; i++) cout << ans[i] << " ";
             cout << ans[n - 1] << endl;
-        }
-        else
+        } else
             cout << "-1" << endl;
     }
 };
 
-int main()
-{
+int main() {
     std::ios::sync_with_stdio(false);
     cin.tie(0);
     int n;
     cin >> n;
     vector<int> q(n, 0);
-    for (int i = 0; i < n; i++)
-        cin >> q[i];
+    for (int i = 0; i < n; i++) cin >> q[i];
     quick_sort(q, 0, n - 1);
-    for (int i = 0; i < n; i++)
-        cout << q[i] << " ";
+    for (int i = 0; i < n; i++) cout << q[i] << " ";
     return 0;
 }
